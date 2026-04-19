@@ -1,93 +1,112 @@
-export type UserProfile = {
-  name: string;
-  gender: "nam" | "nu" | "khac";
-  birth: string;
+export type Step =
+  | "form"
+  | "life"
+  | "quiz"
+  | "tarotTopics"
+  | "tarotDraw"
+  | "final";
+
+export type ToneMode = "serious" | "warm" | "funny";
+
+export type FocusTopic =
+  | "tinh_yeu"
+  | "gia_dao"
+  | "kinh_doanh"
+  | "tai_chinh"
+  | "cong_viec"
+  | "tong_quan";
+
+export type UserForm = {
+  fullName: string;
+  birthDate: string; // dd/mm/yyyy
   phone: string;
+  job: string;
+  gender: string;
+  mainFocus: FocusTopic;
 };
 
-export type Topic = "tinh_cam" | "gia_dao" | "tien_tai" | "co_hoi";
-
-export type QuizGroup =
-  | "work"
-  | "stress"
-  | "money"
-  | "love"
-  | "social"
-  | "mindset"
-  | "ambition"
-  | "decision"
-  | "family"
-  | "intuition";
-
-export type ScoreKey =
-  | "emotion"
-  | "logic"
-  | "ambition"
-  | "stability"
-  | "risk"
-  | "introvert"
-  | "extrovert"
-  | "sensitivity"
-  | "resilience"
-  | "initiative"
-  | "boredom"
-  | "comfortNeed"
-  | "bluntNeed";
-
-export type ScoreMap = Record<ScoreKey, number>;
+export type MbtiAxis = "EI" | "SN" | "TF" | "JP";
+export type MbtiLetter = "E" | "I" | "S" | "N" | "T" | "F" | "J" | "P";
 
 export type QuizOption = {
-  value: string;
-  text: string;
-  effect: Partial<ScoreMap>;
+  label: string;
+  letter: MbtiLetter;
 };
 
 export type QuizQuestion = {
-  id: string;
-  group: QuizGroup;
-  text: string;
-  options: QuizOption[];
+  id: number;
+  axis: MbtiAxis;
+  question: string;
+  options: [QuizOption, QuizOption];
 };
 
-export type BaseReading = {
-  energyType: string;
-  element: "Kim" | "Mộc" | "Thủy" | "Hỏa" | "Thổ";
-  luckyColors: string[];
-  luckyNumbers: number[];
-  lifePhase: string;
-  currentFortune: string;
-  summary: string;
+export type MbtiScores = {
+  E: number;
+  I: number;
+  S: number;
+  N: number;
+  T: number;
+  F: number;
+  J: number;
+  P: number;
 };
 
-export type PersonalityProfile = {
-  dominantTraits: string[];
-  communicationStyle: string;
-  emotionalState: string;
-  workEnergy: string;
-  relationshipStyle: string;
-  vibe: "soft" | "sharp" | "mystic" | "playful";
+export type PersonalitySummary = {
+  typeCode: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  strengths: string[];
+  cautions: string[];
+  workStyle: string[];
+  loveStyle: string[];
+  growthAdvice: string[];
+  scorePercent: Record<MbtiLetter, number>;
 };
 
 export type TarotCard = {
-  id: string;
-  title: string;
-  meaning: string;
-  toneTags: string[];
-  icon: string;
+  id: number;
+  name: string;
+  meaningUpright: string;
+  meaningReverse: string;
 };
 
-export type ReadingResult = {
-  overview: string;
-  personalitySummary: string;
-  topicReading: string;
-  topicFlavorText: string;
-  opportunity: string;
-  caution: string;
-  adviceText: string;
-  luckyColors: string[];
-  luckyNumbers: number[];
-  tarotSupport: TarotCard[];
-  closing: string;
-  consistencyTone: "dark_careful" | "balanced_rising" | "bright_opening";
-  styleTone: "soft" | "sharp" | "mystic" | "playful";
+export type LifeSection = {
+  title: string;
+  content: string[];
+};
+
+export type TarotDraw = {
+  topic: FocusTopic;
+  card: TarotCard;
+  mode: "upright" | "reverse";
+  reading: string;
+};
+
+export type FinalReadingInput = {
+  user: UserForm;
+  tone: ToneMode;
+  dailyVisitCount: number;
+  lifeSections: LifeSection[];
+  personality: PersonalitySummary;
+  tarotDraws: TarotDraw[];
+};
+
+export type StoredUserProfile = {
+  fullName: string;
+  birthDate: string;
+  phone: string;
+  job: string;
+  gender: string;
+  mainFocus: FocusTopic;
+  lastViewedAt?: string;
+  dailyVisitCount?: number;
+};
+
+export type FeedbackPayload = {
+  fullName: string;
+  phone: string;
+  mbtiType: string;
+  feedback: string;
+  rating: number;
 };
