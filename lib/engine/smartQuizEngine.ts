@@ -1,30 +1,50 @@
-import { QuizQuestion, TraitKey } from "../types";
+import { QuizQuestion, MbtiLetter, MbtiScores } from "../types";
 
-type ScoreMap = Record<TraitKey, number>;
-
-export function buildScoreMap(answers: TraitKey[]): ScoreMap {
-  const score: ScoreMap = {
-    lanh_dao: 0,
-    thuc_te: 0,
-    cam_xuc: 0,
-    sang_tao: 0,
-    tham_trong: 0,
+function emptyScores(): MbtiScores {
+  return {
+    E: 0,
+    I: 0,
+    S: 0,
+    N: 0,
+    T: 0,
+    F: 0,
+    J: 0,
+    P: 0,
   };
+}
 
-  answers.forEach((a) => {
-    score[a]++;
+// 🔢 Tính điểm
+export function runQuizEngine(
+  questions: QuizQuestion[],
+  answers: MbtiLetter[]
+): MbtiScores {
+  const scores = emptyScores();
+
+  questions.forEach((q, index) => {
+    const answer = answers[index];
+    if (!answer) return;
+
+    scores[answer] += 1;
   });
 
-  return score;
+  return scores;
 }
 
-// 🔥 CHỌN TRAIT ĐANG THIẾU
-function getWeakTrait(score: ScoreMap): TraitKey {
-  const sorted = Object.entries(score).sort((a, b) => a[1] - b[1]);
-  return sorted[0][0] as TraitKey;
+// 🎯 Lấy axis đang yếu nhất (EI, SN, TF, JP)
+function getWeakAxis(scores: MbtiScores): "EI" | "SN" | "TF" | "JP" {
+  const pairs: Array<["EI" | "SN" | "TF" | "JP", number]> = [
+    ["EI", scores.E + scores.I],
+    ["SN", scores.S + scores.N],
+    ["TF", scores.T + scores.F],
+    ["JP", scores.J + scores.P],
+  ];
+
+  pairs.sort((a, b) => a[1] - b[1]);
+
+  return pairs[0][0];
 }
 
-// 🔥 TRÁNH HỎI TRÙNG
+// 🚫 Tránh câu đã hỏi
 function filterUsed(
   bank: QuizQuestion[],
   usedIds: number[]
@@ -32,36 +52,31 @@ function filterUsed(
   return bank.filter((q) => !usedIds.includes(q.id));
 }
 
-// 🔥 LẤY CÂU HỎI THEO TRAIT
-function getByTrait(
+// 🎯 Lấy câu theo axis
+function getByAxis(
   bank: QuizQuestion[],
-  trait: TraitKey
+  axis: QuizQuestion["axis"]
 ): QuizQuestion[] {
-  return bank.filter((q) =>
-    q.options.some((o) => o.trait === trait)
-  );
+  return bank.filter((q) => q.axis === axis);
 }
 
-// 🎯 MAIN AI
+// 🤖 AI chọn câu hỏi
 export function pickSmartQuiz(
   bank: QuizQuestion[],
-  answers: TraitKey[],
+  answers: MbtiLetter[],
   usedIds: number[]
 ): QuizQuestion {
-  const score = buildScoreMap(answers);
+  const scores = runQuizEngine(bank, answers);
 
-  const weakTrait = getWeakTrait(score);
+  const weakAxis = getWeakAxis(scores);
 
   const unused = filterUsed(bank, usedIds);
 
-  const priorityQuestions = getByTrait(unused, weakTrait);
+  const priority = getByAxis(unused, weakAxis);
 
-  if (priorityQuestions.length > 0) {
-    return priorityQuestions[
-      Math.floor(Math.random() * priorityQuestions.length)
-    ];
+  if (priority.length > 0) {
+    return priority[Math.floor(Math.random() * priority.length)];
   }
 
-  // fallback random
   return unused[Math.floor(Math.random() * unused.length)];
 }

@@ -15,7 +15,7 @@ export type FocusTopic =
   | "tai_chinh"
   | "cong_viec"
   | "tong_quan";
-
+export  type Profile = UserForm;
 export type UserForm = {
   fullName: string;
   birthDate: string; // dd/mm/yyyy
@@ -65,10 +65,12 @@ export type PersonalitySummary = {
 };
 
 export type TarotCard = {
-  id: number;
   name: string;
-  meaningUpright: string;
-  meaningReverse: string;
+  meaning: {
+    love: string;
+    work: string;
+    life: string;
+  };
 };
 
 export type LifeSection = {
@@ -83,7 +85,7 @@ export type TarotDraw = {
   reading: string;
 };
 
-export type FinalReadingInput = {
+export type FinalReading = {
   user: UserForm;
   tone: ToneMode;
   dailyVisitCount: number;

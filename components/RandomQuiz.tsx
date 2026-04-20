@@ -74,22 +74,28 @@ export default function RandomQuiz({ questions, onFinish }: Props) {
 
       <div className="quiz-card">
         <div className="quiz-card__category">
-          {currentQuestion.category.replaceAll("_", " ").toUpperCase()}
+         {currentQuestion.axis === "EI"
+  ? "NĂNG LƯỢNG"
+  : currentQuestion.axis === "SN"
+  ? "NHẬN THỨC"
+  : currentQuestion.axis === "TF"
+  ? "RA QUYẾT ĐỊNH"
+  : "LỐI SỐNG"}
         </div>
 
         <h3 className="quiz-card__question">{currentQuestion.question}</h3>
 
         <div className="quiz-options">
-          {currentQuestion.options.map((option, index) => (
-            <button
-              key={`${currentQuestion.id}-${index}`}
-              className="quiz-option"
-              onClick={() => handleSelect(option.trait)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+  {currentQuestion.options.map((option, index) => (
+    <button
+      key={`${currentQuestion.id}-${index}`}
+      className="quiz-option"
+      onClick={() => handleSelect(option.letter)}
+    >
+      {option.label}
+    </button>
+  ))}
+</div>
       </div>
 
       <div className="quiz-note">

@@ -47,7 +47,7 @@ export default function TarotStage({
 
       <div className="tarot-intro">
         <p>
-          {profile.fullName}, với khí chất <strong>{personality.label}</strong>, 
+          {profile.fullName}, với khí chất <strong>{personality.title}</strong>, 
           cách bạn nhìn và phản ứng với cuộc đời không hề ngẫu nhiên.
         </p>
         <p>

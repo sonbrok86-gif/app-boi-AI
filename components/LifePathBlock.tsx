@@ -1,30 +1,24 @@
 "use client";
 
-import { LifePathReading, Profile } from "@/lib/types";
+import { LifeSection, UserForm } from "@/lib/types";
 
 type Props = {
-  profile: Profile;
-  lifePath: LifePathReading;
+  profile: UserForm;
+  lifeSections: LifeSection[];
   onContinue: () => void;
 };
 
 export default function LifePathBlock({
   profile,
-  lifePath,
+  lifeSections,
   onContinue,
 }: Props) {
-  function renderList(list: string[]) {
-    return list.map((item, index) => (
-      <li key={index}>{item}</li>
-    ));
-  }
-
   return (
     <section className="panel panel--big">
       <div className="panel__head">
         <h2 className="panel__title">🔮 Tử vi trọn đời</h2>
         <p className="panel__desc">
-          Đây là phần nền — đọc theo tuổi, ngũ hành và khí vận tổng thể của bạn.
+          Đây là phần nền — đọc theo hướng tổng quan cuộc sống và khí vận của bạn.
         </p>
       </div>
 
@@ -41,34 +35,25 @@ export default function LifePathBlock({
 
         <div>
           <span>💼 Công việc:</span>
-          <strong>{profile.currentJob}</strong>
+          <strong>{profile.job || "Chưa cập nhật"}</strong>
         </div>
 
         <div>
-          <span>🧭 Nhóm tuổi:</span>
-          <strong>{lifePath.ageGroup}</strong>
-        </div>
-
-        <div>
-          <span>🌿 Ngũ hành:</span>
-          <strong>{lifePath.element.toUpperCase()}</strong>
+          <span>🧭 Trọng tâm:</span>
+          <strong>{profile.mainFocus}</strong>
         </div>
       </div>
 
-      <div className="life-section">
-        <h3>📌 Tổng quan vận mệnh</h3>
-        <ul>{renderList(lifePath.generalDestiny)}</ul>
-      </div>
-
-      <div className="life-section">
-        <h3>👁️ Tướng số & khí chất</h3>
-        <ul>{renderList(lifePath.appearanceReading)}</ul>
-      </div>
-
-      <div className="life-section">
-        <h3>📈 Hậu vận & đường dài</h3>
-        <ul>{renderList(lifePath.longTermLuck)}</ul>
-      </div>
+      {lifeSections.map((section, index) => (
+        <div className="life-section" key={index}>
+          <h3>{section.title}</h3>
+          <ul>
+            {section.content.map((item, itemIndex) => (
+              <li key={itemIndex}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
 
       <div className="life-highlight">
         👉 Phần này là nền chung. Phần tiếp theo sẽ soi sâu hơn theo tính cách và quẻ bài riêng của bạn.

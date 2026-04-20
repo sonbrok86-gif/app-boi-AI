@@ -1,5 +1,5 @@
 import {
-  FinalReadingInput,
+  FinalReading,
   FocusTopic,
   ToneMode,
 } from "../types";
@@ -32,7 +32,7 @@ function toneLine(
   return funny;
 }
 
-function getTopLifeLines(lifeSections: FinalReadingInput["lifeSections"]) {
+function getTopLifeLines(lifeSections: FinalReading["lifeSections"]) {
   const lines: string[] = [];
 
   lifeSections.forEach((section) => {
@@ -56,7 +56,7 @@ function buildPersonalitySummary(
 }
 
 function buildTarotSummary(
-  tarotDraws: FinalReadingInput["tarotDraws"],
+  tarotDraws: FinalReading["tarotDraws"],
   tone: ToneMode
 ) {
   const topicText = tarotDraws
@@ -152,7 +152,7 @@ function buildClosing(
   return [ending, revisit].filter(Boolean).join("\n\n");
 }
 
-export function buildFinalReading(input: FinalReadingInput) {
+export function buildFinalReading(input: FinalReading) {
   const {
     user,
     tone,

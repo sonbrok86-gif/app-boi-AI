@@ -27,7 +27,7 @@ export default function MandatoryProfileForm({
     if (!form.fullName.trim()) return "Bạn chưa nhập họ tên";
     if (!form.birthDate.trim()) return "Bạn chưa nhập ngày sinh";
     if (!form.phone.trim()) return "Bạn chưa nhập số điện thoại";
-    if (!form.currentJob.trim()) return "Bạn chưa nhập công việc";
+    if (!form.job.trim()) return "Bạn chưa nhập công việc";
     return null;
   }
 
@@ -75,8 +75,8 @@ export default function MandatoryProfileForm({
         <input
           className="input"
           placeholder="Công việc hiện tại *"
-          value={form.currentJob}
-          onChange={(e) => updateField("currentJob", e.target.value)}
+          value={form.job}
+          onChange={(e) => updateField("job", e.target.value)}
         />
       </div>
 

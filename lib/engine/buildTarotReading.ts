@@ -28,8 +28,18 @@ function toneLine(
   return funny;
 }
 
-function getBaseMeaning(card: TarotCard, mode: "upright" | "reverse") {
-  return mode === "upright" ? card.meaningUpright : card.meaningReverse;
+function getBaseMeaning(topic: FocusTopic, card: TarotCard) {
+  switch (topic) {
+    case "tinh_yeu":
+      return card.meaning.love;
+    case "kinh_doanh":
+    case "cong_viec":
+      return card.meaning.work;
+    case "gia_dao":
+    case "tai_chinh":
+    default:
+      return card.meaning.life;
+  }
 }
 
 function buildTopicIntro(topic: FocusTopic, tone: ToneMode) {
@@ -86,7 +96,6 @@ function buildTopicIntro(topic: FocusTopic, tone: ToneMode) {
 
 function buildTopicBody(
   topic: FocusTopic,
-  card: TarotCard,
   mode: "upright" | "reverse",
   tone: ToneMode
 ) {
@@ -238,9 +247,9 @@ export function buildTarotReading(
   mode: "upright" | "reverse",
   tone: ToneMode
 ) {
-  const baseMeaning = getBaseMeaning(card, mode);
+  const baseMeaning = getBaseMeaning(topic, card);
   const intro = buildTopicIntro(topic, tone);
-  const body = buildTopicBody(topic, card, mode, tone);
+  const body = buildTopicBody(topic, mode, tone);
   const closing = buildClosing(topic, tone);
 
   return [
