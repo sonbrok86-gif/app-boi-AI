@@ -3,6 +3,9 @@ import {
   getLunarIdentityFromSolarText,
   isValidBirthDate as isValidSolarBirthDate,
 } from "./lunar";
+import { pickOne } from "../vibe/random";
+import { elementData, ElementKey } from "../vibe/elements";
+import { getZodiacFromYear, zodiacData } from "../vibe/zodiac";
 
 export function isValidBirthDate(input: string) {
   return isValidSolarBirthDate(input);
@@ -59,6 +62,11 @@ function toneLine(
   return funny;
 }
 
+function getBirthYear(input: string) {
+  const parsed = input.split("/");
+  return Number(parsed[2] || 0);
+}
+
 function buildFocusLine(focus: FocusTopic, tone: ToneMode) {
   switch (focus) {
     case "kinh_doanh":
@@ -111,11 +119,99 @@ function buildFocusLine(focus: FocusTopic, tone: ToneMode) {
   }
 }
 
+function buildZodiacSection(
+  birthYear: number,
+  tone: ToneMode
+): LifeSection {
+  const zodiacKey = getZodiacFromYear(birthYear);
+  const zodiac = zodiacData[zodiacKey];
+
+  return {
+    title: "🐾 Khí chất theo con giáp",
+    content: [
+      toneLine(
+        `Tuổi ${zodiac.name} mang một nhịp khí khá rõ: ${pickOne(zodiac.shortVibe)}.`,
+        `Tuổi ${zodiac.name} của bạn có nét nổi bật là ${pickOne(zodiac.shortVibe)}.`,
+        `Tuổi ${zodiac.name} nói gọn là: ${pickOne(zodiac.shortVibe)} 😄`,
+        tone
+      ),
+      toneLine(
+        pickOne(zodiac.positiveLines),
+        pickOne(zodiac.positiveLines),
+        `${pickOne(zodiac.positiveLines)} 😄`,
+        tone
+      ),
+      toneLine(
+        `Một câu hợp với tuổi ${zodiac.name}: ${pickOne(zodiac.proverbs)}`,
+        `Một câu dành riêng cho nhịp tuổi ${zodiac.name}: ${pickOne(zodiac.proverbs)}`,
+        `🧠 Một câu dành cho đạo hữu: ${pickOne(zodiac.proverbs)}`,
+        tone
+      ),
+      toneLine(
+        pickOne(zodiac.workHints),
+        pickOne(zodiac.workHints),
+        `${pickOne(zodiac.workHints)} 😄`,
+        tone
+      ),
+      toneLine(
+        pickOne(zodiac.loveHints),
+        pickOne(zodiac.loveHints),
+        `${pickOne(zodiac.loveHints)} 😄`,
+        tone
+      ),
+    ],
+  };
+}
+
+function buildElementSection(
+  nguHanh: string,
+  tone: ToneMode
+): LifeSection {
+  const element = elementData[(nguHanh as ElementKey) || "Thổ"] || elementData.Thổ;
+
+  return {
+    title: "🎨 Mệnh ngũ hành, màu hợp & số hợp",
+    content: [
+      toneLine(
+        `Xét theo mệnh ${element.name}, khí vận của bạn ${pickOne(element.vibe)}.`,
+        `Mệnh ${element.name} của bạn cho thấy bạn ${pickOne(element.vibe)}.`,
+        `Mệnh ${element.name} của đạo hữu ${pickOne(element.vibe)} 😄`,
+        tone
+      ),
+      toneLine(
+        `Màu hợp mệnh gồm: ${element.colors.join(", ")}.`,
+        `Bạn hợp các màu: ${element.colors.join(", ")}.`,
+        `Màu hợp mệnh của đạo hữu là: ${element.colors.join(", ")} 😄`,
+        tone
+      ),
+      toneLine(
+        `Số dễ đem lại cảm giác thuận nhịp là: ${element.luckyNumbers.join(", ")}.`,
+        `Những con số hợp mệnh gồm: ${element.luckyNumbers.join(", ")}.`,
+        `Số may mắn của đạo hữu gồm: ${element.luckyNumbers.join(", ")} 😄`,
+        tone
+      ),
+      toneLine(
+        `Mệnh này thường được trợ lực bởi hành ${element.supportive.join(", ")} và nên cẩn trọng khi va nhiều với hành ${element.caution.join(", ")}.`,
+        `Bạn thường hợp nhịp với hành ${element.supportive.join(", ")} và nên để ý hơn với hành ${element.caution.join(", ")}.`,
+        `Mệnh ${element.name} của đạo hữu hợp ${element.supportive.join(", ")}. Nhớ né ${element.caution.join(", ")} cho đỡ “va chạm năng lượng” 😄`,
+        tone
+      ),
+      toneLine(
+        pickOne(element.reminders),
+        pickOne(element.reminders),
+        `${pickOne(element.reminders)} 😄`,
+        tone
+      ),
+    ],
+  };
+}
+
 export function buildLifeReading(form: UserForm, tone: ToneMode): LifeSection[] {
   const canChi = getCanChi(form.birthDate);
   const napAm = getNapAm(form.birthDate);
   const nguHanh = getNguHanh(form.birthDate);
   const ageGroup = getAgeGroup(form.birthDate);
+  const birthYear = getBirthYear(form.birthDate);
 
   const tongQuan: LifeSection = {
     title: "📌 Tổng quan khí số",
@@ -141,6 +237,9 @@ export function buildLifeReading(form: UserForm, tone: ToneMode): LifeSection[] 
       buildFocusLine(form.mainFocus, tone),
     ],
   };
+
+  const zodiacSection = buildZodiacSection(birthYear, tone);
+  const elementSection = buildElementSection(nguHanh, tone);
 
   const nguHanhSection: LifeSection = {
     title: "🌿 Ngũ hành & bản mệnh",
@@ -302,8 +401,27 @@ export function buildLifeReading(form: UserForm, tone: ToneMode): LifeSection[] 
         "Đang rối mà mở thêm việc là tự làm khó mình đó đạo hữu 😄",
         tone
       ),
+      toneLine(
+        "Có lúc vận chưa xấu, chỉ là người chưa chịu gom lực lại.",
+        "Giữ nhịp đều và giữ lòng sáng thì đường sẽ thoáng dần.",
+        pickOne([
+          "Đạo hữu không cần hơn ai cả. Chỉ cần đừng tự làm khó mình quá là đủ sáng rồi 😄",
+          "Có lúc đời chưa làm khó đạo hữu đâu, chỉ là đạo hữu mở hơi nhiều cửa cùng lúc 😄",
+          "Đi đúng nhịp thì chậm một chút cũng không sao. Lệch nhịp mới là thứ làm mình mệt 😄",
+        ]),
+        tone
+      ),
     ],
   };
 
-  return [tongQuan, nguHanhSection, congViec, tinhCam, hauVan, loiNhan];
+  return [
+    tongQuan,
+    zodiacSection,
+    elementSection,
+    nguHanhSection,
+    congViec,
+    tinhCam,
+    hauVan,
+    loiNhan,
+  ];
 }

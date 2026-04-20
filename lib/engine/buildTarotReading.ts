@@ -1,4 +1,7 @@
 import { FocusTopic, TarotCard, ToneMode } from "../types";
+import { pickOne } from "../vibe/random";
+import { elementData, ElementKey } from "../vibe/elements";
+import { getZodiacFromYear, zodiacData } from "../vibe/zodiac";
 
 function topicLabel(topic: FocusTopic) {
   switch (topic) {
@@ -26,6 +29,11 @@ function toneLine(
   if (tone === "serious") return serious;
   if (tone === "warm") return warm;
   return funny;
+}
+
+function getBirthYear(input: string) {
+  const parsed = input.split("/");
+  return Number(parsed[2] || 0);
 }
 
 function getBaseMeaning(topic: FocusTopic, card: TarotCard) {
@@ -194,6 +202,105 @@ function buildTopicBody(
   }
 }
 
+function buildZodiacElementHint(
+  birthDate: string,
+  nguHanhRaw: string,
+  topic: FocusTopic,
+  tone: ToneMode
+) {
+  const year = getBirthYear(birthDate);
+  const zodiacKey = getZodiacFromYear(year);
+  const zodiac = zodiacData[zodiacKey];
+  const element =
+    elementData[(nguHanhRaw as ElementKey) || "Thổ"] || elementData.Thổ;
+
+  switch (topic) {
+    case "kinh_doanh":
+      return toneLine(
+        `Nếu soi thêm theo khí tuổi ${zodiac.name} và mệnh ${element.name}, phần này nhắc bạn nên giữ nhịp tỉnh và đi đường bền hơn là bung lực quá sớm.`,
+        `Theo tuổi ${zodiac.name} và mệnh ${element.name}, bạn hợp cách làm có nhịp, có trục và có khoảng tính trước.`,
+        pickOne([
+          `Theo khí tuổi ${zodiac.name}, đạo hữu hợp kiểu ${pickOne(
+            zodiac.workHints
+          )} 😄`,
+          `Mệnh ${element.name} nhắc đạo hữu: làm ăn đẹp nhất khi giữ được nhịp và đừng nóng hơn dữ liệu 😄`,
+          `Tuổi ${zodiac.name} đi với mệnh ${element.name} cho thấy: có khí là tốt, đi đúng nhịp còn tốt hơn 😄`,
+        ]),
+        tone
+      );
+
+    case "tai_chinh":
+      return toneLine(
+        `Nếu nhìn thêm theo tuổi ${zodiac.name} và mệnh ${element.name}, phần tiền bạc của bạn hợp nhịp giữ đều hơn là lên xuống theo cảm hứng.`,
+        `Theo khí tuổi ${zodiac.name} và mệnh ${element.name}, bạn nên ưu tiên sự ổn định và kỷ luật trong chuyện tiền.`,
+        pickOne([
+          `Tuổi ${zodiac.name} đi với mệnh ${element.name} nhắc đạo hữu: tài khí không yếu, chỉ cần nhịp giữ chặt hơn một chút 😄`,
+          `Mệnh ${element.name} của đạo hữu hợp màu ${element.colors.join(
+            ", "
+          )}. Nhớ giữ ví tỉnh như giữ đầu 😄`,
+          `Theo khí tuổi ${zodiac.name}, phần tiền của đạo hữu hợp kiểu đi đều hơn là đổi bài liên tục 😄`,
+        ]),
+        tone
+      );
+
+    case "tinh_yeu":
+      return toneLine(
+        `Nếu nhìn thêm theo tuổi ${zodiac.name} và mệnh ${element.name}, chuyện tình cảm của bạn hợp rõ lòng, đúng nhịp và bớt đoán hơn là để cảm xúc tự kéo đi.`,
+        `Theo khí tuổi ${zodiac.name} và mệnh ${element.name}, bạn hợp kiểu yêu có sự hiểu nhau và độ chắc bên trong.`,
+        pickOne([
+          `Tuổi ${zodiac.name} nhắc đạo hữu: ${pickOne(zodiac.loveHints)} 😄`,
+          `Mệnh ${element.name} của đạo hữu hợp kiểu tình cảm có nhịp ấm và rõ, không hợp quá gắt quá ép 😄`,
+          `Theo khí tuổi ${zodiac.name}, tim của đạo hữu hợp được hiểu hơn là bị thử quá nhiều 😄`,
+        ]),
+        tone
+      );
+
+    case "gia_dao":
+      return toneLine(
+        `Nếu nhìn thêm theo tuổi ${zodiac.name} và mệnh ${element.name}, phần gia đạo của bạn sáng lên khi trong nhà mềm lời và đều cảm xúc.`,
+        `Theo khí tuổi ${zodiac.name} và mệnh ${element.name}, bạn hợp nhịp sống có độ yên để giữ lực.`,
+        pickOne([
+          `Tuổi ${zodiac.name} nhắc đạo hữu: ${pickOne(zodiac.loveHints)} 😄`,
+          `Mệnh ${element.name} hợp sự ổn và màu ${element.colors.join(
+            ", "
+          )}. Trong nhà yên thì ngoài đời cũng sáng hơn 😄`,
+          `Theo khí tuổi ${zodiac.name}, gia đạo êm một chút là đạo hữu đỡ phải mở mười hai tab trong đầu 😄`,
+        ]),
+        tone
+      );
+
+    case "cong_viec":
+      return toneLine(
+        `Nếu soi thêm theo khí tuổi ${zodiac.name} và mệnh ${element.name}, công việc của bạn hợp đúng vai, đúng chỗ và đúng nhịp hơn là cố đứng mãi ở nơi không phản ánh được mình.`,
+        `Theo tuổi ${zodiac.name} và mệnh ${element.name}, bạn hợp môi trường để phát khí thật hơn là chỗ chỉ bắt làm đều.`,
+        pickOne([
+          `Tuổi ${zodiac.name} nhắc đạo hữu: ${pickOne(zodiac.workHints)} 😄`,
+          `Mệnh ${element.name} của đạo hữu hợp màu ${element.colors.join(
+            ", "
+          )}. Đặt đúng chỗ thì rất dễ bật 😄`,
+          `Theo khí tuổi ${zodiac.name}, đạo hữu không hợp đứng quá lâu ở nơi không cho mình phát hết ánh 😄`,
+        ]),
+        tone
+      );
+
+    default:
+      return toneLine(
+        `Nếu soi thêm theo khí tuổi ${zodiac.name} và mệnh ${element.name}, phần này nhắc bạn giữ đúng trục và đừng tự phân tán lực.`,
+        `Theo tuổi ${zodiac.name} và mệnh ${element.name}, bạn hợp cách đi vừa đúng nhịp vừa giữ trục.`,
+        pickOne([
+          `Theo khí tuổi ${zodiac.name}, đạo hữu hợp kiểu ${pickOne(
+            zodiac.shortVibe
+          )}. Đi đúng vậy là sáng 😄`,
+          `Theo mệnh ${element.name}, đạo hữu hợp màu ${element.colors.join(
+            ", "
+          )}. Nhớ giữ nhịp đúng chất của mình là đẹp 😄`,
+          `Tuổi ${zodiac.name} đi với mệnh ${element.name} nhắc đạo hữu một điều: mạnh là tốt, đúng nhịp còn tốt hơn 😄`,
+        ]),
+        tone
+      );
+  }
+}
+
 function buildClosing(topic: FocusTopic, tone: ToneMode) {
   switch (topic) {
     case "tinh_yeu":
@@ -250,11 +357,19 @@ export function buildTarotReading(
   topic: FocusTopic,
   card: TarotCard,
   mode: "upright" | "reverse",
-  tone: ToneMode
+  tone: ToneMode,
+  birthDate: string,
+  nguHanh: string
 ) {
   const baseMeaning = getBaseMeaning(topic, card);
   const intro = buildTopicIntro(topic, tone);
   const body = buildTopicBody(topic, mode, tone);
+  const zodiacElementHint = buildZodiacElementHint(
+    birthDate,
+    nguHanh,
+    topic,
+    tone
+  );
   const closing = buildClosing(topic, tone);
 
   return [
@@ -263,6 +378,7 @@ export function buildTarotReading(
       mode === "upright" ? "ở thế thuận" : "ở thế ngược"
     } cho thấy: ${baseMeaning}`,
     body,
+    zodiacElementHint,
     closing,
   ].join(" ");
 }

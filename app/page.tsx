@@ -272,7 +272,14 @@ function handleDrawCards() {
     const index = Math.floor(Math.random() * deckCopy.length);
     const card = deckCopy.splice(index, 1)[0];
     const mode = Math.random() > 0.5 ? "upright" : "reverse";
-    const reading = buildTarotReading(topic, card, mode, tone);
+    const reading = buildTarotReading(
+  topic,
+  card,
+  mode,
+  tone,
+  form.birthDate,
+  nguHanh
+);
 
     return {
       topic,

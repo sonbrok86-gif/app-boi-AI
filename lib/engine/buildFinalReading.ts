@@ -1,4 +1,7 @@
 import { FinalReading, FocusTopic, ToneMode } from "../types";
+import { pickOne } from "../vibe/random";
+import { getZodiacFromYear, zodiacData } from "../vibe/zodiac";
+import { elementData, ElementKey } from "../vibe/elements";
 
 function topicLabel(topic: FocusTopic) {
   switch (topic) {
@@ -28,8 +31,9 @@ function toneLine(
   return funny;
 }
 
-function pickOne<T>(items: T[]) {
-  return items[Math.floor(Math.random() * items.length)];
+function getBirthYear(input: string) {
+  const parsed = input.split("/");
+  return Number(parsed[2] || 0);
 }
 
 function getTopLifeLines(lifeSections: FinalReading["lifeSections"]) {
@@ -76,6 +80,63 @@ function buildLifeBlock(
     `Nếu nhìn phần nền khí số, có thể thấy trục đời của bạn đang hiện ra khá rõ:\n- ${topLifeLines.join("\n- ")}`,
     `Phần tử vi nền cho thấy bạn có mấy đường nổi bật sau:\n- ${topLifeLines.join("\n- ")}`,
     `Tử vi nền nói gọn về đạo hữu là:\n- ${topLifeLines.join("\n- ")}`,
+    tone
+  );
+}
+
+function buildZodiacAndElementBlock(
+  birthDate: string,
+  nguHanhRaw: string,
+  tone: ToneMode
+) {
+  const birthYear = getBirthYear(birthDate);
+  const zodiacKey = getZodiacFromYear(birthYear);
+  const zodiac = zodiacData[zodiacKey];
+  const element =
+    elementData[(nguHanhRaw as ElementKey) || "Thổ"] || elementData.Thổ;
+
+  return toneLine(
+    `Nếu soi thêm theo khí tuổi và mệnh, tuổi ${zodiac.name} của bạn mang nét ${pickOne(
+      zodiac.shortVibe
+    )}. Mệnh ${element.name} lại cho thấy bạn hợp các màu ${element.colors.join(
+      ", "
+    )}, hợp nhịp với hành ${element.supportive.join(
+      ", "
+    )} và nên cẩn trọng hơn khi va nhiều với hành ${element.caution.join(
+      ", "
+    )}.`,
+    `Nhìn theo con giáp và ngũ hành, tuổi ${zodiac.name} của bạn có khí ${pickOne(
+      zodiac.shortVibe
+    )}. Mệnh ${element.name} hợp màu ${element.colors.join(
+      ", "
+    )}, hợp hành ${element.supportive.join(
+      ", "
+    )} và nên để ý hơn với ${element.caution.join(", ")}.`,
+    `Nếu nhìn thêm theo con giáp và ngũ hành thì đạo hữu tuổi ${
+      zodiac.name
+    } — ${pickOne(zodiac.shortVibe)} 😄 Mệnh ${
+      element.name
+    } của đạo hữu hợp màu ${element.colors.join(
+      ", "
+    )}, số ${element.luckyNumbers.join(
+      ", "
+    )} và nhớ né ${element.caution.join(
+      ", "
+    )} cho đỡ “va chạm năng lượng” 😄`,
+    tone
+  );
+}
+
+function buildZodiacProverbBlock(birthDate: string, tone: ToneMode) {
+  const birthYear = getBirthYear(birthDate);
+  const zodiacKey = getZodiacFromYear(birthYear);
+  const zodiac = zodiacData[zodiacKey];
+  const proverb = pickOne(zodiac.proverbs);
+
+  return toneLine(
+    `Một câu khá hợp với nhịp tuổi ${zodiac.name} của bạn lúc này là: ${proverb}`,
+    `Một câu dành riêng cho tuổi ${zodiac.name} là: ${proverb}`,
+    `🧠 Một câu dành cho đạo hữu tuổi ${zodiac.name}: ${proverb}`,
     tone
   );
 }
@@ -190,7 +251,10 @@ function buildDirectionalAdvice(userFocus: FocusTopic, tone: ToneMode) {
 }
 
 function buildFinalSynthesis(input: FinalReading, tone: ToneMode) {
-  const { personality, tarotDraws } = input;
+  const { personality, tarotDraws, user } = input;
+  const birthYear = getBirthYear(user.birthDate);
+  const zodiacKey = getZodiacFromYear(birthYear);
+  const zodiac = zodiacData[zodiacKey];
 
   const focusList = tarotDraws.map((draw) => topicLabel(draw.topic));
   const uniqueFocus = Array.from(new Set(focusList));
@@ -198,9 +262,9 @@ function buildFinalSynthesis(input: FinalReading, tone: ToneMode) {
     uniqueFocus.length > 0 ? uniqueFocus.join(", ") : "những mặt quan trọng";
 
   return toneLine(
-    `Nếu ghép tử vi nền, tính cách và ba lá bài lại, có thể nói bạn là kiểu người càng đi đúng khí chất thật của mình càng mở vận mạnh. Bạn không hợp đường giả, không hợp chỗ chật, cũng không hợp kiểu sống nhỏ hơn bản thân. Những gì đang hiện ra ở ${focusText} đều nhắc cùng một điều: khi bạn rõ mình là ai và giữ đúng nhịp, vận sẽ sáng.`,
-    `Gom cả ba phần lại, bạn sáng nhất khi sống đúng khí chất và chọn đúng trục chính. Phần tính cách "${personality.title}" của bạn không phải để giấu đi cho vừa mắt người khác, mà là để dùng đúng chỗ cho những mặt như ${focusText} cùng sáng lên.`,
-    `Ghép cả ba phần lại, ta nói thẳng với đạo hữu một câu: đạo hữu hợp sống đúng chất của mình hơn là cố làm phiên bản vừa lòng tất cả mọi người 😄 Nhìn từ ${focusText}, càng cố gồng thành người khác thì càng mệt; càng sống đúng khí chất của mình thì đường càng mở.`,
+    `Nếu ghép tử vi nền, tính cách, khí tuổi ${zodiac.name} và ba lá bài lại, có thể nói bạn là kiểu người càng đi đúng khí chất thật của mình càng mở vận mạnh. Bạn không hợp đường giả, không hợp chỗ chật, cũng không hợp kiểu sống nhỏ hơn bản thân. Những gì đang hiện ra ở ${focusText} đều nhắc cùng một điều: khi bạn rõ mình là ai và giữ đúng nhịp, vận sẽ sáng.`,
+    `Gom cả bốn phần lại, bạn sáng nhất khi sống đúng khí chất và chọn đúng trục chính. Phần tính cách "${personality.title}" của bạn không phải để giấu đi cho vừa mắt người khác, mà là để dùng đúng chỗ cho những mặt như ${focusText} cùng sáng lên.`,
+    `Ghép cả tử vi nền, khí tuổi ${zodiac.name}, mệnh và ba lá bài lại, ta nói thẳng với đạo hữu một câu: đạo hữu hợp sống đúng chất của mình hơn là cố làm phiên bản vừa lòng tất cả mọi người 😄 Nhìn từ ${focusText}, càng cố gồng thành người khác thì càng mệt; càng sống đúng khí chất của mình thì đường càng mở.`,
     tone
   );
 }
@@ -210,17 +274,35 @@ function buildSoftTruth(userFocus: FocusTopic, tone: ToneMode) {
 
   switch (userFocus) {
     case "kinh_doanh":
-      return "Nói thật nhẹ một câu nha đạo hữu: có lúc không phải thiếu cơ hội, mà là thấy cơ hội nào cũng muốn mở cửa chào 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: có lúc không phải thiếu cơ hội, mà là thấy cơ hội nào cũng muốn mở cửa chào 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: có máu làm ăn là tốt, chỉ cần đừng để hứng đi nhanh hơn nhịp 😄",
+      ]);
     case "tai_chinh":
-      return "Nói thật nhẹ một câu nha đạo hữu: kiếm được là một chuyện, giữ được để khỏi tự tiếc mới là chuyện dài 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: kiếm được là một chuyện, giữ được để khỏi tự tiếc mới là chuyện dài 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: tài khí không yếu, chỉ là nhịp giữ đôi lúc hơi lỏng 😄",
+      ]);
     case "tinh_yeu":
-      return "Nói thật nhẹ một câu nha đạo hữu: đôi khi không phải thiếu duyên, chỉ là tim mở hơi nhanh còn lòng thì chưa kịp chắc 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: đôi khi không phải thiếu duyên, chỉ là tim mở hơi nhanh còn lòng thì chưa kịp chắc 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: tình cảm của mình nhiều khi không thiếu sáng, chỉ thiếu rõ 😄",
+      ]);
     case "gia_dao":
-      return "Nói thật nhẹ một câu nha đạo hữu: trong nhà mà chưa yên thì đầu óc khó mà giả vờ yên được 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: trong nhà mà chưa yên thì đầu óc khó mà giả vờ yên được 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: gia đạo êm một chút là vận ngoài đời cũng thoáng hơn hẳn 😄",
+      ]);
     case "cong_viec":
-      return "Nói thật nhẹ một câu nha đạo hữu: có lúc mệt không phải vì yếu, mà vì đang cố sáng ở chỗ không phản chiếu được mình 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: có lúc mệt không phải vì yếu, mà vì đang cố sáng ở chỗ không phản chiếu được mình 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: chăm là tốt, nhưng chăm sai chỗ thì chỉ giỏi… mệt 😄",
+      ]);
     default:
-      return "Nói thật nhẹ một câu nha đạo hữu: nhiều khi đời chưa làm khó bạn, chỉ là bạn đang tự mở thêm chế độ khó 😄";
+      return pickOne([
+        "Nói thật nhẹ một câu nha đạo hữu: nhiều khi đời chưa làm khó bạn, chỉ là bạn đang tự mở thêm chế độ khó 😄",
+        "Nói thật nhẹ một câu nha đạo hữu: có lúc vận chưa xấu, chỉ là mình chưa chịu gom lực lại 😄",
+      ]);
   }
 }
 
@@ -253,7 +335,11 @@ function buildAftertaste(tone: ToneMode) {
   return toneLine(
     "Đi đúng nhịp thì đường sẽ tự sáng dần.",
     "Không cần gấp. Chỉ cần đúng trục là được.",
-    "Chốt nhẹ nha đạo hữu: bớt tự làm khó mình, đời sẽ dễ thương hơn thấy rõ 😄",
+    pickOne([
+      "Chốt nhẹ nha đạo hữu: bớt tự làm khó mình, đời sẽ dễ thương hơn thấy rõ 😄",
+      "Nhớ một câu thôi đạo hữu: đúng nhịp còn quý hơn đúng lúc gấp 😄",
+      "Giữ trục, giữ lòng sáng, phần còn lại để đời tự mở tiếp 😄",
+    ]),
     tone
   );
 }
@@ -270,12 +356,18 @@ export function buildFinalReading(input: FinalReading) {
 
   const intro = buildOpening(user.fullName, tone);
   const lifeBlock = buildLifeBlock(lifeSections, tone);
+  const zodiacElementBlock = buildZodiacAndElementBlock(
+    user.birthDate,
+    user.birthDate ? (lifeSections.find((s) => s.title === "🌿 Ngũ hành & bản mệnh") ? "" : "") : "",
+    tone
+  );
   const personalityBlock = buildPersonalityBlock(personality, tone);
   const strengthsBlock = buildStrengthsBlock(personality.strengths, tone);
   const cautionBlock = buildCautionsBlock(personality.cautions, tone);
   const tarotBlock = buildTarotSummary(tarotDraws, tone);
   const eachTarotReading = buildEachTarotBlock(tarotDraws);
   const directionalAdvice = buildDirectionalAdvice(user.mainFocus, tone);
+  const proverbBlock = buildZodiacProverbBlock(user.birthDate, tone);
   const finalSynthesis = buildFinalSynthesis(input, tone);
   const softTruth = buildSoftTruth(user.mainFocus, tone);
   const closing = buildClosing(dailyVisitCount, tone);
@@ -285,6 +377,10 @@ export function buildFinalReading(input: FinalReading) {
     intro,
     "",
     lifeBlock,
+    "",
+    zodiacElementBlock,
+    "",
+    proverbBlock,
     "",
     personalityBlock,
     "",
