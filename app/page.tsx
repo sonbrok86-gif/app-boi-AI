@@ -53,13 +53,15 @@ function getTopicLabel(topic: FocusTopic) {
 }
 
 function getToneLabel(tone: ToneMode) {
-  if (tone === "serious") return "Sâu & nghiêm túc";
-  if (tone === "warm") return "Mềm & đời thường";
-  return "Hài hước nhẹ";
+  if (tone === "serious") return "Đạo hữu trầm ổn";
+  if (tone === "warm") return "Đạo hữu ấm áp";
+  return "Đạo hữu hài hước";
 }
 
 export default function Page() {
   const [step, setStep] = useState<Step>("form");
+const [transitioning, setTransitioning] = useState(false);
+const [transitionText, setTransitionText] = useState("");
 
   const [form, setForm] = useState<UserForm>({
     fullName: "",
@@ -83,6 +85,17 @@ export default function Page() {
 
   const [selectedTopics, setSelectedTopics] = useState<FocusTopic[]>([]);
   const [tarotDraws, setTarotDraws] = useState<TarotDraw[]>([]);
+const [openedCards, setOpenedCards] = useState<number[]>([]);
+function toggleTopic(topic: FocusTopic) {
+  if (selectedTopics.includes(topic)) {
+    setSelectedTopics((prev) => prev.filter((item) => item !== topic));
+    return;
+  }
+
+  if (selectedTopics.length >= 3) return;
+
+  setSelectedTopics((prev) => [...prev, topic]);
+}
 
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(5);
@@ -120,7 +133,33 @@ export default function Page() {
   const napAm = form.birthDate ? getNapAm(form.birthDate) : "";
   const nguHanh = form.birthDate ? getNguHanh(form.birthDate) : "";
   const ageGroup = form.birthDate ? getAgeGroup(form.birthDate) : "";
+const daoHuuTransitions = {
+ formToLife:
+    "Được rồi đạo hữu. Ta soi cái gốc trước đã. Gốc mà đúng thì đường sáng nhanh lắm, gốc mà lệch thì dễ tự làm mình quay như chong chóng 😄",
+  lifeToQuiz:
+    "Nền đã thấy rồi. Giờ hỏi thêm vài câu để xem đạo hữu mạnh ở đâu, mềm ở đâu, và hay tự làm khó mình ở khúc nào 😄",
+  quizToTarot:
+    "Khá lắm đạo hữu. Tính cách đã lộ ra kha khá rồi. Giờ mời bài lên tiếng, xem trực giác có troll mình không 😄",
+  tarotDrawIntro:
+    "Ba hướng đã chọn xong. Tới lúc lật bài. Mong lá nào cũng hiền, chứ có lá nói thật quá thì đạo hữu cũng đừng lườm ta 😄",
+  tarotToFinal:
+    "Đủ dữ liệu rồi đạo hữu. Giờ ta ráp mảnh ghép lại. Có đoạn nào trúng tim thì cứ bình tĩnh, thở nhẹ rồi đọc tiếp 😄",
+};
+function gotoStep(next: Step, text?: string) {
+  if (text) setTransitionText(text);
+  setTransitioning(true);
 
+  setTimeout(() => {
+    setStep(next);
+    setTransitioning(false);
+  }, 400);
+
+  if (text) {
+    setTimeout(() => {
+      setTransitionText("");
+    }, 2000);
+  }
+}
   function handleLoadSavedProfile() {
     const phone = form.phone.trim();
     const birthDate = form.birthDate.trim();
@@ -145,7 +184,6 @@ export default function Page() {
       gender: saved.gender || "",
       mainFocus: saved.mainFocus || "tong_quan",
     });
-
     setProfileLoadedMessage("Đã nạp lại hồ sơ đã lưu của người xem.");
   }
 
@@ -176,7 +214,7 @@ export default function Page() {
     }
 
     const count = registerView(phone, birthDate);
-    const toneMode = getToneModeByVisit(count);
+    const toneMode: ToneMode = "funny";
 
     setDailyVisitCount(count);
     setTone(toneMode);
@@ -193,71 +231,61 @@ export default function Page() {
 
     const builtLife = buildLifeReading(form, toneMode);
     setLifeSections(builtLife);
-    setStep("life");
+    gotoStep("life", daoHuuTransitions.formToLife);
   }
 
   function handleContinueToQuiz() {
-    const picked = pickMbtiQuiz(questionBank, 3);
-    setQuizQuestions(picked);
-    setAnswers([]);
-    setQuizIndex(0);
-    setPersonalityReady(false);
-    setSelectedTopics([]);
-    setTarotDraws([]);
-    setStep("quiz");
+  const picked = pickMbtiQuiz(questionBank, 3);
+  setQuizQuestions(picked);
+  setAnswers([]);
+  setQuizIndex(0);
+  setPersonalityReady(false);
+  setSelectedTopics([]);
+  setTarotDraws([]);
+  gotoStep("quiz", daoHuuTransitions.lifeToQuiz);
+}
+
+function handleAnswer(letter: string) {
+  const newAnswers = [...answers, letter];
+  setAnswers(newAnswers);
+
+  if (quizIndex + 1 >= quizQuestions.length) {
+    setPersonalityReady(true);
+    gotoStep("tarotTopics", daoHuuTransitions.quizToTarot);
+    return;
   }
 
-  function handleAnswer(letter: string) {
-    const newAnswers = [...answers, letter];
-    setAnswers(newAnswers);
+  setQuizIndex((prev) => prev + 1);
+}
 
-    if (quizIndex + 1 >= quizQuestions.length) {
-      setPersonalityReady(true);
-      setStep("tarotTopics");
-      return;
-    }
-
-    setQuizIndex((prev) => prev + 1);
+function handleGoTarotDraw() {
+  if (selectedTopics.length !== 3) {
+    alert("Vui lòng chọn đúng 3 chủ đề.");
+    return;
   }
+  gotoStep("tarotDraw", daoHuuTransitions.tarotDrawIntro);
+}
 
-  function toggleTopic(topic: FocusTopic) {
-    if (selectedTopics.includes(topic)) {
-      setSelectedTopics((prev) => prev.filter((item) => item !== topic));
-      return;
-    }
+function handleDrawCards() {
+  const deckCopy = [...tarotDeck];
+  const draws: TarotDraw[] = selectedTopics.map((topic) => {
+    const index = Math.floor(Math.random() * deckCopy.length);
+    const card = deckCopy.splice(index, 1)[0];
+    const mode = Math.random() > 0.5 ? "upright" : "reverse";
+    const reading = buildTarotReading(topic, card, mode, tone);
 
-    if (selectedTopics.length >= 3) return;
-    setSelectedTopics((prev) => [...prev, topic]);
-  }
+    return {
+      topic,
+      card,
+      mode,
+      reading,
+    };
+  });
 
-  function handleGoTarotDraw() {
-    if (selectedTopics.length !== 3) {
-      alert("Vui lòng chọn đúng 3 chủ đề.");
-      return;
-    }
-    setStep("tarotDraw");
-  }
-
-  function handleDrawCards() {
-    const deckCopy = [...tarotDeck];
-    const draws: TarotDraw[] = selectedTopics.map((topic) => {
-      const index = Math.floor(Math.random() * deckCopy.length);
-      const card = deckCopy.splice(index, 1)[0] ;
-      const mode = Math.random() > 0.5 ? "upright" : "reverse";
-      const reading = buildTarotReading(topic, card, mode, tone);
-
-      return {
-        topic,
-        card,
-        mode,
-        reading,
-      };
-    });
-
-    setTarotDraws(draws);
-    setStep("final");
-  }
-
+  setTarotDraws(draws);
+setOpenedCards([]);
+gotoStep("final", daoHuuTransitions.tarotToFinal);
+}
   async function handleSubmitFeedback(e: FormEvent) {
     e.preventDefault();
 
@@ -312,21 +340,33 @@ export default function Page() {
     setPersonalityReady(false);
     setSelectedTopics([]);
     setTarotDraws([]);
+setOpenedCards([]);
     setBlockMessage("");
     setFeedback("");
     setFeedbackStatus("");
   }
 
   return (
-    <main className="page-shell">
-      <div className="container">
+  <main className="page-shell">
+    <div className="container">
+
+      {/* 🔮 TEXT CHUYỂN BƯỚC */}
+      {transitionText && (
+        <div className="dao-transition">
+          <p>{transitionText}</p>
+        </div>
+      )}
+
+      {/* 🎬 FADE */}
+      <div className={transitioning ? "fade-out" : "fade-in"}>
+
+        {/* toàn bộ UI cũ của bạn giữ nguyên ở đây */}
         <div className="hero">
           <p className="eyebrow">APP BÓI AI · FLOW FINAL V3 MBTI PRO</p>
-          <h1 className="title">Tử vi nền trước, MBTI-like pro sau, tarot 3 lá cuối cùng</h1>
-          <p className="subtitle">
-            Bản nâng cấp này đi sâu hơn vào khí chất, kiểu nhận thức, cách yêu,
-            cách làm việc và nhịp phát triển của người xem.
-          </p>
+          <h1 className="title">Tử vi nền trước, khí chất hiện ra, rồi mới để tarot chốt nhịp</h1>
+<p className="subtitle">
+  Bản này không chỉ xem cho vui. Nó soi cái gốc, nhìn khí chất, rồi ghép lại để đạo hữu thấy mình mạnh ở đâu, lệch ở đâu, và nên giữ trục thế nào cho đời sáng hơn.
+</p>
 
           <div className="stepbar">
             <span className={step === "form" ? "active" : ""}>1. Thông tin</span>
@@ -640,15 +680,51 @@ export default function Page() {
             </div>
 
             <div className="tarot-grid">
-              {tarotDraws.map((draw, idx) => (
-                <div className="tarot-card" key={idx}>
-                  <div className="tarot-badge">{getTopicLabel(draw.topic)}</div>
-                  <h3>{draw.card.name}</h3>
-                  <p className="muted">{draw.mode === "upright" ? "Thuận" : "Ngược"}</p>
-                  <p>{draw.reading}</p>
-                </div>
-              ))}
+  {tarotDraws.map((draw, idx) => {
+    const opened = openedCards.includes(idx);
+
+    return (
+      <button
+        type="button"
+        key={idx}
+        className={`tarot-card tarot-flip ${opened ? "is-open" : ""}`}
+        onClick={() => {
+          setOpenedCards((prev) =>
+            prev.includes(idx)
+              ? prev.filter((i) => i !== idx)
+              : [...prev, idx]
+          );
+        }}
+      >
+        <div className="tarot-inner">
+          <div className="tarot-face tarot-back">
+            <div className="tarot-back-glow" />
+            <div className="tarot-back-content">
+              <div className="tarot-back-icon">🃏</div>
+              <div className="tarot-hidden-title">Lá bài ẩn</div>
+              <div className="tarot-hidden-sub">
+                Chạm để lật bài, đạo hữu
+              </div>
+              <div className="tarot-hidden-topic">
+                {getTopicLabel(draw.topic)}
+              </div>
             </div>
+          </div>
+
+          <div className="tarot-face tarot-front">
+            <div className="tarot-badge">{getTopicLabel(draw.topic)}</div>
+            <h3 className="tarot-name">{draw.card.name}</h3>
+            <p className="muted tarot-mode">
+              {draw.mode === "upright" ? "Thuận" : "Ngược"}
+            </p>
+            <p className="tarot-reading">{draw.reading}</p>
+            <p className="tarot-tap-hint">Chạm để úp lại</p>
+          </div>
+        </div>
+      </button>
+    );
+  })}
+</div>
 
             <div className="section-block">
               <h3>🔍 Bài đọc tổng hợp</h3>
@@ -720,6 +796,7 @@ export default function Page() {
           </section>
         )}
       </div>
+ </div>
     </main>
   );
 }

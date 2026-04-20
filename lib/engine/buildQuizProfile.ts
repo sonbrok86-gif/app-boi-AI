@@ -44,11 +44,16 @@ function getProfileContent(typeCode: string, tone: ToneMode) {
     case "ENTJ":
       return {
         title: toneLine("Người dẫn đường", "Người có lực dẫn dắt", "Sếp hệ có aura", tone),
-        subtitle: "Quyết đoán, chiến lược, thích tạo chuyển động",
+        subtitle: toneLine(
+          "Quyết đoán, chiến lược, thích tạo chuyển động",
+          "Quyết đoán, chiến lược, thích tạo chuyển động",
+          "Quyết đoán, có tầm nhìn, bước vào là muốn chỉnh lại cả đội hình 😄",
+          tone
+        ),
         description: toneLine(
           "Bạn có xu hướng nhìn xa, ra quyết định nhanh và thích chủ động cầm nhịp.",
           "Bạn là kiểu người có nội lực lãnh đạo khá rõ, thường nhìn ra hướng đi trước người khác.",
-          "Bạn là kiểu người bước vào phòng là năng lượng tự động đổi mode 😄",
+          "Đạo hữu là kiểu bước vào phòng là năng lượng tự động đổi mode. Nhìn hướng khá nhanh, chốt việc cũng khá gọn 😄",
           tone
         ),
         strengths: [
@@ -81,11 +86,16 @@ function getProfileContent(typeCode: string, tone: ToneMode) {
     case "ENFP":
       return {
         title: toneLine("Người truyền lửa", "Người mang cảm hứng", "Hệ nhiều mood nhưng cuốn", tone),
-        subtitle: "Sáng tạo, giàu cảm xúc, thích tự do và kết nối",
+        subtitle: toneLine(
+          "Sáng tạo, giàu cảm xúc, thích tự do và kết nối",
+          "Sáng tạo, giàu cảm xúc, thích tự do và kết nối",
+          "Sáng tạo, giàu cảm xúc, đầu có nhiều tab nhưng vẫn rất cuốn 😄",
+          tone
+        ),
         description: toneLine(
           "Bạn thường mang năng lượng mở, nhiều ý tưởng và dễ truyền cảm hứng cho người khác.",
           "Bạn là kiểu người ấm, nhanh bắt sóng và có khả năng khiến không khí sáng lên.",
-          "Bạn là hệ nghĩ nhanh, cảm nhanh, thích nhiều thứ cùng lúc 😄",
+          "Đạo hữu là hệ nghĩ nhanh, cảm nhanh, thích nhiều thứ cùng lúc. Có khi tim vừa rung, đầu đã mở thêm ba ý tưởng mới 😄",
           tone
         ),
         strengths: [
@@ -118,11 +128,16 @@ function getProfileContent(typeCode: string, tone: ToneMode) {
     case "INFJ":
       return {
         title: toneLine("Người thấu cảm sâu", "Người nhìn xa bằng trực giác", "Hệ trầm nhưng sâu", tone),
-        subtitle: "Sâu sắc, tinh tế, trực giác mạnh",
+        subtitle: toneLine(
+          "Sâu sắc, tinh tế, trực giác mạnh",
+          "Sâu sắc, tinh tế, trực giác mạnh",
+          "Bề ngoài yên mà bên trong sâu như có nguyên phòng phân tích 😄",
+          tone
+        ),
         description: toneLine(
           "Bạn thường cảm được lớp nghĩa bên dưới bề mặt và có xu hướng nhìn đời bằng chiều sâu.",
           "Bạn là người có trực giác mạnh, sống nội tâm nhưng không hề yếu.",
-          "Bạn là kiểu ngoài im mà bên trong đang chạy nguyên hệ phân tích tầng sâu 😄",
+          "Đạo hữu là kiểu ngoài im nhưng bên trong đang chạy nguyên hệ phân tích tầng sâu. Không nói nhiều không có nghĩa là không thấy 😄",
           tone
         ),
         strengths: [
@@ -155,11 +170,16 @@ function getProfileContent(typeCode: string, tone: ToneMode) {
     default:
       return {
         title: toneLine("Người có bản sắc riêng", "Người mang khí chất riêng", "Hệ không hề nhạt", tone),
-        subtitle: "Mỗi người có một nhịp mạnh riêng",
+        subtitle: toneLine(
+          "Mỗi người có một nhịp mạnh riêng",
+          "Mỗi người có một nhịp mạnh riêng",
+          "Có nhịp riêng, gu riêng, không phải bản sao sản xuất hàng loạt 😄",
+          tone
+        ),
         description: toneLine(
           "Bạn có tổ hợp tính cách riêng, không cần giống số đông mới là đúng.",
           "Bạn có chất riêng rõ ràng; điều quan trọng là đi đúng môi trường hợp mình.",
-          "Bạn không phải bản sao của ai cả, nên cứ sống đúng chất mình 😄",
+          "Đạo hữu không phải bản sao của ai cả, nên sống đúng chất mình vẫn hơn là cố ép cho vừa mắt thiên hạ 😄",
           tone
         ),
         strengths: [
@@ -211,16 +231,41 @@ export function buildQuizProfile(
   const [tPct, fPct] = percentPair(scores.T, scores.F);
   const [jPct, pPct] = percentPair(scores.J, scores.P);
 
+  const title =
+    tone === "funny"
+      ? `Đạo hữu ${typeCode} – không phải dạng vừa 😄`
+      : content.title;
+
+  const subtitle =
+    tone === "funny"
+      ? `${content.subtitle} · Đạo hữu này không phải dạng vừa đâu 😄`
+      : content.subtitle;
+
+  const description =
+    tone === "funny"
+      ? `Đạo hữu thuộc nhóm "${typeCode}". ${content.description}`
+      : content.description;
+
   return {
     typeCode,
-    title: content.title,
-    subtitle: content.subtitle,
-    description: content.description,
-    strengths: content.strengths,
-    cautions: content.cautions,
-    workStyle: content.workStyle,
-    loveStyle: content.loveStyle,
-    growthAdvice: content.growthAdvice,
+    title,
+    subtitle,
+    description,
+    strengths: content.strengths.map((s) =>
+      tone === "funny" ? `${s} (dùng đúng là lợi hại 😄)` : s
+    ),
+    cautions: content.cautions.map((c) =>
+      tone === "funny" ? `${c} (đoạn này dễ tự trap mình 😄)` : c
+    ),
+    workStyle: content.workStyle.map((w) =>
+      tone === "funny" ? `${w} (hợp là chạy rất mượt 😄)` : w
+    ),
+    loveStyle: content.loveStyle.map((l) =>
+      tone === "funny" ? `${l} (tim có nhịp riêng đó nha 😄)` : l
+    ),
+    growthAdvice: content.growthAdvice.map((g) =>
+      tone === "funny" ? `${g} (đây là đường nâng cấp cho đạo hữu 😄)` : g
+    ),
     scorePercent: {
       E: ePct,
       I: iPct,

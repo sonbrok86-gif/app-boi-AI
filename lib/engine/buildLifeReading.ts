@@ -48,7 +48,12 @@ export function getCanChiDay(input: string) {
   return getLunarIdentityFromSolarText(input).canChiDay;
 }
 
-function toneLine(serious: string, warm: string, funny: string, tone: ToneMode) {
+function toneLine(
+  serious: string,
+  warm: string,
+  funny: string,
+  tone: ToneMode
+) {
   if (tone === "serious") return serious;
   if (tone === "warm") return warm;
   return funny;
@@ -60,38 +65,49 @@ function buildFocusLine(focus: FocusTopic, tone: ToneMode) {
       return toneLine(
         "Mệnh này hợp khai lộ, hợp xoay thế, hợp chuyện mở đường làm ăn. Ở nơi quá hẹp, khí dễ bức mà tài khó tụ.",
         "Bạn có duyên với chuyện làm ăn, miễn là đừng tản sức vào quá nhiều cửa cùng lúc.",
-        "Bạn có máu kinh doanh đó. Chỉ cần bớt mấy pha đang hứng là mở thêm cửa mới."
-      , tone);
+        "Đạo hữu có máu kinh doanh đó. Chỉ cần bớt mấy pha đang hứng là mở thêm cửa mới 😄",
+        tone
+      );
+
     case "tai_chinh":
       return toneLine(
         "Tài khí không yếu, điều cần là giữ nhịp. Có tiền mà tâm không định thì của vào rồi cũng dễ tán.",
         "Bạn kiếm được, nhưng giữ tốt hơn khi bớt cảm hứng và tăng kỷ luật.",
-        "Ví của bạn không ghét bạn. Nó chỉ hơi stress khi thấy chủ nhân đổi chiến thuật liên tục."
-      , tone);
+        "Ví của đạo hữu không ghét đạo hữu đâu. Nó chỉ hơi stress khi thấy chủ nhân đổi chiến thuật liên tục 😄",
+        tone
+      );
+
     case "tinh_yeu":
       return toneLine(
         "Tình cảm của bạn không hợp kiểu nửa nóng nửa lạnh. Đã chọn thì cần chân thành, đã thương thì cần đúng nhịp.",
         "Bạn cần mối quan hệ có chiều sâu và hiểu nhau thật.",
-        "Tim bạn không hợp kiểu chơi game đoán ý mỗi ngày."
-      , tone);
+        "Tim của đạo hữu không hợp kiểu chơi game đoán ý mỗi ngày 😄",
+        tone
+      );
+
     case "gia_dao":
       return toneLine(
         "Gia đạo là nền của vận. Trong ấm thì ngoài mới sáng; trong rối thì mọi việc khác cũng dễ hao lực.",
         "Nhà yên thì bạn lên tinh thần rõ rệt.",
-        "Nhà mà êm là bạn sáng. Nhà mà loạn là trong đầu mở nguyên dàn tab."
-      , tone);
+        "Nhà mà êm là đạo hữu sáng. Nhà mà loạn là trong đầu mở nguyên dàn tab 😄",
+        tone
+      );
+
     case "cong_viec":
       return toneLine(
         "Công việc hợp nhất là nơi có đất cho bản lĩnh và vị thế, chứ không phải nơi chỉ bắt làm đều mà không cho phát khí.",
         "Bạn hợp môi trường có quyền chủ động và có khoảng không để thể hiện năng lực.",
-        "Bạn không hợp làm cây cảnh công sở."
-      , tone);
+        "Đạo hữu không hợp làm cây cảnh công sở 😄",
+        tone
+      );
+
     default:
       return toneLine(
         "Đại cục đời bạn không sợ thiếu cơ hội, chỉ sợ sai nhịp và tự phân tán mình.",
         "Bạn có đường đi, cái cần là giữ lực và rõ hướng.",
-        "Đời không chặn bạn nhiều như bạn tự mở thêm việc cho mình đâu."
-      , tone);
+        "Đời không chặn đạo hữu nhiều như đạo hữu tự mở thêm việc cho mình đâu 😄",
+        tone
+      );
   }
 }
 
@@ -101,238 +117,190 @@ export function buildLifeReading(form: UserForm, tone: ToneMode): LifeSection[] 
   const nguHanh = getNguHanh(form.birthDate);
   const ageGroup = getAgeGroup(form.birthDate);
 
-  function toneLine(s: string, w: string, f: string) {
-    if (tone === "serious") return s;
-    if (tone === "warm") return w;
-    return f;
-  }
-
-  // ================== TỔNG QUAN ==================
   const tongQuan: LifeSection = {
     title: "📌 Tổng quan khí số",
     content: [
       toneLine(
-        `${canChi} – ${napAm}.
-火在其位 – khí tại kỳ vị.
-Mệnh này không hợp sống mờ, càng không hợp ở lâu nơi nhỏ mà tự mài mòn chí khí.`,
-        
-        `${canChi} – ${napAm}.
-Bạn là kiểu người càng đặt đúng chỗ càng sáng rất nhanh.`,
-        
-        `${canChi} – ${napAm}.
-Bạn không phải kiểu “bình bình”.
-Đặt đúng chỗ thì bật, đặt sai chỗ thì vẫn bật… nhưng hơi cháy 😄`
+        `${canChi} – ${napAm}. Mệnh này không hợp sống mờ, càng không hợp ở lâu nơi nhỏ mà tự mài mòn chí khí.`,
+        `${canChi} – ${napAm}. Bạn là kiểu người càng đặt đúng chỗ càng sáng rất nhanh.`,
+        `${canChi} – ${napAm}. Đạo hữu không phải kiểu “bình bình”. Đặt đúng chỗ thì bật sáng, đặt sai chỗ thì vẫn bật… nhưng cháy hơi mạnh 😄`,
+        tone
       ),
-
       toneLine(
-        `Cổ ngữ có câu: “Hổ hành sơn lâm, bất dữ khuyển tranh lộ.”
-→ Cọp đi rừng, không tranh đường với loài nhỏ.`,
-        
-        `Người có khí thì nên chọn đường có tầm.
-Không cần hơn ai, chỉ cần đúng vị trí.`,
-        
-        `Nói đơn giản:
-Bạn không hợp chơi chung mấy game “so đo nhỏ nhỏ” 😄`
+        "Cổ ngữ có câu: “Hổ hành sơn lâm, bất dữ khuyển tranh lộ.” Cọp đi rừng, không tranh đường với loài nhỏ.",
+        "Người có khí thì nên chọn đường có tầm. Không cần hơn ai, chỉ cần đúng vị trí.",
+        "Nói đơn giản: đạo hữu không hợp chơi chung mấy game so đo nhỏ nhỏ cả ngày 😄",
+        tone
       ),
-
       toneLine(
-        `Hiện bạn ở "${ageGroup}" — giai đoạn chuyển lực.
-Nếu giữ được trục, rất dễ bật.`,
-        
-        `Bạn đang ở "${ageGroup}" – đoạn rất quan trọng để đi xa hơn.`,
-        
-        `Đang ở "${ageGroup}".
-Hiểu nôm na: đời đang bảo “bớt lan man lại đi là lên” 😄`
+        `Hiện bạn ở "${ageGroup}" — giai đoạn chuyển lực. Nếu giữ được trục, rất dễ bật.`,
+        `Bạn đang ở "${ageGroup}" – đoạn khá quan trọng để đi xa hơn.`,
+        `Đạo hữu đang ở "${ageGroup}". Hiểu nôm na: đời đang nhắc “bớt lan man lại đi là lên” 😄`,
+        tone
       ),
+      buildFocusLine(form.mainFocus, tone),
     ],
   };
 
-  // ================== NGŨ HÀNH ==================
   const nguHanhSection: LifeSection = {
     title: "🌿 Ngũ hành & bản mệnh",
     content:
       nguHanh === "Hỏa"
         ? [
             toneLine(
-              `Mệnh Hỏa – Lư Trung Hỏa.
-火在爐中 – lửa trong lò.
-Không phải lửa bùng bừa, mà là lửa có thể tôi luyện.`,
-              
-              `Bạn thuộc hệ Hỏa – có lực, có nhiệt, có độ bật.`,
-              
-              `Bạn thuộc hệ Hỏa – trong người có sẵn “turbo tăng áp” 😄`
+              "Mệnh Hỏa – lửa quý ở chỗ cháy đúng, không phải cháy lớn.",
+              "Bạn thuộc hệ Hỏa – có lực, có nhiệt, có độ bật.",
+              "Đạo hữu thuộc hệ Hỏa – trong người có sẵn turbo. Chỉ cần đừng đạp ga lúc chưa nhìn đường là ổn 😄",
+              tone
             ),
-
             toneLine(
-              `Lửa quý không ở chỗ cháy lớn,
-mà ở chỗ cháy đúng.`,
-              
-              `Điểm mạnh là nhiệt.
-Điểm cần giữ là đừng để cảm xúc chạy trước.`,
-              
-              `Bạn không thiếu lửa.
-Chỉ cần thêm… bộ điều nhiệt 😄`
+              "Điểm mạnh là động lực. Điều cần giữ là đừng để cảm xúc chạy trước lý trí.",
+              "Bạn không thiếu lửa, điều cần là điều nhiệt.",
+              "Đạo hữu không thiếu lửa. Chỉ cần thêm bộ điều nhiệt là đẹp 😄",
+              tone
             ),
           ]
-
         : nguHanh === "Mộc"
         ? [
             toneLine(
-              `Mệnh Mộc – sinh trưởng.
-木成於養 – cây lớn nhờ dưỡng.`,
-              `Bạn thuộc hệ Mộc – hợp đi đường dài.`,
-              `Bạn kiểu “đầu game không ồn, cuối game hơi đáng sợ” 😄`
+              "Mệnh Mộc – sinh trưởng nhờ dưỡng. Mạnh ở bền, không mạnh ở hấp tấp.",
+              "Bạn thuộc hệ Mộc – hợp đi đường dài, bền và chắc.",
+              "Đạo hữu kiểu đầu game không ồn, cuối game hơi đáng sợ 😄",
+              tone
             ),
-
             toneLine(
-              `Mộc mạnh ở bền, không phải ở nhanh.`,
-              `Bạn hợp xây nền hơn là ăn xổi.`,
-              `Bạn đi đường dài ok, miễn đừng “chuẩn bị 3 năm chưa đi” 😄`
+              "Đi đúng nhịp sẽ lên rất đều. Ép nhanh quá dễ lệch gốc.",
+              "Bạn hợp xây nền hơn là ăn xổi.",
+              "Đi đường dài rất ổn, miễn đừng chuẩn bị ba năm mà chưa chịu bước 😄",
+              tone
             ),
           ]
-
         : nguHanh === "Kim"
         ? [
             toneLine(
-              `Mệnh Kim – sắc và chuẩn.
-金以鍛成 – kim loại phải qua rèn.`,
-              `Bạn có tiêu chuẩn rõ ràng.`,
-              `Bạn không khó… chỉ là ghét lộn xộn 😄`
+              "Mệnh Kim – mạnh ở độ chuẩn và sự sắc. Kim tốt là kim qua rèn.",
+              "Bạn có tiêu chuẩn khá rõ và không dễ chấp nhận sự lộn xộn.",
+              "Đạo hữu không khó đâu. Chỉ là ghét mọi thứ lộn xộn thôi 😄",
+              tone
             ),
-
             toneLine(
-              `Kim mạnh khi có khuôn.`,
-              `Bạn hợp môi trường có luật.`,
-              `Đừng biến mình thành “thanh tra cuộc đời 24/7” là đẹp 😄`
+              "Kim sáng khi có khuôn. Nhưng quá cứng thì dễ thành tự làm khó mình.",
+              "Bạn hợp môi trường có nguyên tắc rõ ràng.",
+              "Đừng biến mình thành thanh tra cuộc đời 24/7 là đẹp 😄",
+              tone
             ),
           ]
-
         : nguHanh === "Thủy"
         ? [
             toneLine(
-              `Mệnh Thủy – linh động.
-水隨勢行 – nước đi theo thế.`,
-              `Bạn có độ xoay tốt.`,
-              `Bạn kiểu “khó bị kẹt, nhưng dễ bị loạn nếu suy nghĩ nhiều” 😄`
+              "Mệnh Thủy – linh động, giỏi xoay theo thế nhưng không vì thế mà mất bản chất.",
+              "Bạn có độ mềm và độ xoay tốt, khá hợp thích nghi.",
+              "Đạo hữu kiểu khó bị kẹt, nhưng dễ loạn nếu nghĩ quá nhiều 😄",
+              tone
             ),
-
             toneLine(
-              `Thủy mạnh ở mềm mà không yếu.`,
-              `Bạn hợp thích nghi.`,
-              `Mềm ok, đừng mềm quá thành… không còn bờ 😄`
+              "Thủy mạnh ở mềm mà không yếu. Điều cần giữ là có bờ.",
+              "Bạn linh hoạt, nhưng vẫn cần nguyên tắc nền.",
+              "Mềm thì tốt, đừng mềm quá thành không còn bờ nhé đạo hữu 😄",
+              tone
             ),
           ]
-
         : [
             toneLine(
-              `Mệnh Thổ – giữ nền.
-土厚生萬物 – đất nuôi vạn vật.`,
-              `Bạn hợp đi chắc.`,
-              `Bạn kiểu “xây móng trước, rồi mới tính xây nhà” 😄`
+              "Mệnh Thổ – giữ nền, dưỡng lực, bền mà chắc.",
+              "Bạn hợp đi chắc, xây nền rồi mới bung lực.",
+              "Đạo hữu kiểu xây móng trước rồi mới tính xây nhà, vậy là ổn 😄",
+              tone
             ),
-
             toneLine(
-              `Thổ mạnh ở ổn định.`,
-              `Bạn hợp tích lũy.`,
-              `Đừng bền luôn với thứ đáng ra phải bỏ sớm 😄`
+              "Thổ mạnh ở ổn định. Nhưng bền quá với cái sai cũng là tự khổ.",
+              "Bạn hợp tích lũy theo kiểu vững và đều.",
+              "Đừng bền luôn với thứ đáng ra phải bỏ sớm nha đạo hữu 😄",
+              tone
             ),
           ],
   };
 
-  // ================== CÔNG VIỆC ==================
   const congViec: LifeSection = {
     title: "💼 Công việc & tiền bạc",
     content: [
       toneLine(
-        `Tài khí không yếu.
-Nhưng “tài đa bất tụ” – nhiều hướng quá thì khó gom.`,
-        
-        `Bạn kiếm được.
-Nhưng giữ tốt hơn khi bớt tản.`,
-        
-        `Bạn không nghèo vì không kiếm được.
-Mà vì… mở hơi nhiều cửa 😄`
+        "Tài khí không yếu. Nhưng tài đa bất tụ — quá nhiều hướng thì khó gom lực thành quả lớn.",
+        "Bạn kiếm được, nhưng giữ tốt hơn khi bớt tản và đi có trục hơn.",
+        "Đạo hữu không nghèo vì không kiếm được. Chủ yếu là đôi lúc mở hơi nhiều cửa 😄",
+        tone
       ),
-
       toneLine(
-        `Người có khí nên đi đường có trục.`,
-        
-        `Bạn mạnh nhất khi tập trung.`,
-        
-        `Làm 10 thứ chưa chắc giàu.
-Làm đúng 1–2 thứ có khi giàu thật 😄`
+        "Người có khí nên đi đường có trục. Làm nhiều chưa chắc hơn làm đúng.",
+        "Bạn mạnh nhất khi tập trung vào thứ thật sự hợp khí chất.",
+        "Làm mười thứ chưa chắc giàu. Làm đúng một hai thứ có khi giàu thật 😄",
+        tone
+      ),
+      toneLine(
+        "Nếu cố đứng lâu ở nơi không hợp, lực sẽ hao mà khí cũng mòn.",
+        "Chọn đúng chỗ đứng quan trọng không kém chăm chỉ.",
+        "Chăm là tốt, nhưng chăm sai chỗ thì giỏi… mệt thôi đạo hữu 😄",
+        tone
       ),
     ],
   };
 
-  // ================== TÌNH CẢM ==================
   const tinhCam: LifeSection = {
     title: "❤️ Tình cảm & gia đạo",
     content: [
       toneLine(
-        `Ngoài cứng – trong mềm.
-Tâm cần đúng người hơn là nhiều người.`,
-        
-        `Bạn cần mối quan hệ hiểu nhịp.`,
-        
-        `Bạn có thể giả vờ ổn,
-nhưng tim thì không đơn giản 😄`
+        "Ngoài cứng trong mềm. Tâm của bạn cần đúng người hơn là nhiều người.",
+        "Bạn cần mối quan hệ hiểu nhịp và có chiều sâu thật.",
+        "Đạo hữu có thể giả vờ ổn, nhưng tim thì không đơn giản đâu 😄",
+        tone
       ),
-
       toneLine(
-        `Gia đạo ảnh hưởng vận.`,
-        
-        `Nhà yên → bạn lên.`,
-        
-        `Nhà mà căng → đầu mở 12 tab 😄`
+        "Gia đạo ảnh hưởng trực tiếp đến vận lực. Nhà yên thì đường ngoài cũng sáng hơn.",
+        "Nhà yên thì bạn lên tinh thần rất rõ.",
+        "Nhà mà căng là đầu của đạo hữu mở mười hai tab liền 😄",
+        tone
+      ),
+      toneLine(
+        "Tình đẹp nhất khi lòng rõ, không phải khi cảm xúc lên cao nhất.",
+        "Yêu đúng người thì lòng yên trước rồi mọi thứ mới sáng sau.",
+        "Yêu thì cứ yêu, nhưng đừng để tim lái xe lúc não đang ngủ nha đạo hữu 😄",
+        tone
       ),
     ],
   };
 
-  // ================== HẬU VẬN ==================
   const hauVan: LifeSection = {
     title: "☀️ Hậu vận & đường dài",
     content: [
       toneLine(
-        `Hậu vận không xấu.
-Chỉ cần giữ trục.`,
-        
-        `Càng lớn càng mạnh nếu đi đúng.`,
-        
-        `Bạn không yếu.
-Chỉ là đôi lúc tự làm mình mệt 😄`
+        "Hậu vận không xấu. Chỉ cần giữ được trục chính và đừng tự lệch nhịp.",
+        "Càng lớn bạn càng mạnh nếu đi đúng đường của mình.",
+        "Đạo hữu không yếu. Chỉ là đôi lúc tự làm mình mệt trước thôi 😄",
+        tone
       ),
-
       toneLine(
-        `Đường dài mở khi tâm yên.`,
-        
-        `Bạn có đường đi xa.`,
-        
-        `Đời không chặn bạn.
-Bạn tự mở thêm việc thôi 😄`
+        "Đường dài mở ra rõ nhất khi tâm yên và hướng đi không bị chia nhỏ quá mức.",
+        "Bạn có đường đi xa, miễn là giữ lực đều.",
+        "Đời không chặn đạo hữu nhiều đâu. Chủ yếu đạo hữu tự mở thêm nhiệm vụ phụ 😄",
+        tone
       ),
     ],
   };
 
-  // ================== LỜI NHẮC ==================
   const loiNhan: LifeSection = {
     title: "🪞 Lời nhắc riêng",
     content: [
       toneLine(
-        `Người có khí → nên đi đúng chỗ.`,
-        
-        `Bạn mạnh khi rõ hướng.`,
-        
-        `Bạn không cần chạy nhanh.
-Bạn cần chạy đúng 😄`
+        "Người có khí thì nên đi đúng chỗ. Sai chỗ, mạnh mấy cũng thành hao.",
+        "Bạn mạnh khi rõ hướng và giữ được trục.",
+        "Đạo hữu không cần chạy nhanh. Đạo hữu cần chạy đúng 😄",
+        tone
       ),
-
       toneLine(
-        `Khi rối → quay về trục chính.`,
-        
-        `Tập trung lại.`,
-        
-        `Đang rối mà mở thêm việc là toang 😄`
+        "Khi rối, quay về trục chính. Đừng vì lo mà mở thêm việc.",
+        "Tập trung lại, bớt tản lực thì đường sẽ sáng dần.",
+        "Đang rối mà mở thêm việc là tự làm khó mình đó đạo hữu 😄",
+        tone
       ),
     ],
   };
