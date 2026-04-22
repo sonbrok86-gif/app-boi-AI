@@ -214,7 +214,7 @@ function gotoStep(next: Step, text?: string) {
     }
 
     const count = registerView(phone, birthDate);
-    const toneMode: ToneMode = "funny";
+    const toneMode = getToneModeByVisit(count);
 
     setDailyVisitCount(count);
     setTone(toneMode);
@@ -686,7 +686,7 @@ setOpenedCards([]);
               </div>
             </div>
 
-            <div className="tarot-grid">
+         <div className="tarot-grid">
   {tarotDraws.map((draw, idx) => {
     const opened = openedCards.includes(idx);
 
@@ -697,24 +697,17 @@ setOpenedCards([]);
         className={`tarot-card tarot-flip ${opened ? "is-open" : ""}`}
         onClick={() => {
           setOpenedCards((prev) =>
-            prev.includes(idx)
-              ? prev.filter((i) => i !== idx)
-              : [...prev, idx]
+            prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
           );
         }}
       >
         <div className="tarot-inner">
           <div className="tarot-face tarot-back">
-            <div className="tarot-back-glow" />
             <div className="tarot-back-content">
               <div className="tarot-back-icon">🃏</div>
-              <div className="tarot-hidden-title">Lá bài ẩn</div>
-              <div className="tarot-hidden-sub">
-                Chạm để lật bài, đạo hữu
-              </div>
-              <div className="tarot-hidden-topic">
-                {getTopicLabel(draw.topic)}
-              </div>
+              <div className="tarot-hidden-title">Lá bài {idx + 1}</div>
+              <div className="tarot-hidden-topic">{getTopicLabel(draw.topic)}</div>
+              <div className="tarot-hidden-sub">Chạm để lật bài</div>
             </div>
           </div>
 
@@ -724,7 +717,11 @@ setOpenedCards([]);
             <p className="muted tarot-mode">
               {draw.mode === "upright" ? "Thuận" : "Ngược"}
             </p>
-            <p className="tarot-reading">{draw.reading}</p>
+
+            <p className="tarot-reading">
+              {draw.reading.split(". ").slice(0, 2).join(". ")}
+            </p>
+
             <p className="tarot-tap-hint">Chạm để úp lại</p>
           </div>
         </div>
@@ -732,7 +729,6 @@ setOpenedCards([]);
     );
   })}
 </div>
-
             <div className="section-block">
               <h3>🔍 Bài đọc tổng hợp</h3>
               <p style={{ whiteSpace: "pre-line" }}>{finalReading}</p>
