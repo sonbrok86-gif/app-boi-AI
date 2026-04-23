@@ -937,48 +937,50 @@ export default function Page() {
               </div>
 
               <div className="tarot-grid">
-                {tarotDraws.map((draw, idx) => {
-                  const opened = openedCards.includes(idx);
+  {tarotDraws.map((draw, idx) => {
+    const opened = openedCards.includes(idx);
 
-                  return (
-                    <button
-                      type="button"
-                      key={idx}
-                      className={`tarot-card tarot-flip ${opened ? "is-open" : ""}`}
-                      onClick={() => {
-                        setOpenedCards((prev) =>
-                          prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
-                        );
-                      }}
-                    >
-                      <div className="tarot-inner">
-                        <div className="tarot-face tarot-back">
-                          <div className="tarot-back-content">
-                            <div className="tarot-back-icon">🃏</div>
-                            <div className="tarot-hidden-title">Lá bài {idx + 1}</div>
-                            <div className="tarot-hidden-topic">{getTopicLabel(draw.topic)}</div>
-                            <div className="tarot-hidden-sub">Chạm để lật bài</div>
-                          </div>
-                        </div>
+    return (
+      <button
+        type="button"
+        key={idx}
+        className={`tarot-card tarot-flip ${opened ? "is-open" : ""}`}
+        onClick={() => {
+          setOpenedCards((prev) =>
+            prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+          );
+        }}
+      >
+        <div className="tarot-inner">
+          <div className="tarot-face tarot-back">
+            <div className="tarot-back-content">
+              <div className="tarot-back-icon">🃏</div>
+              <div className="tarot-hidden-title">Lá bài {idx + 1}</div>
+              <div className="tarot-hidden-topic">{getTopicLabel(draw.topic)}</div>
+              <div className="tarot-hidden-sub">Chạm để lật bài</div>
+            </div>
+          </div>
 
-                        <div className="tarot-face tarot-front">
-                          <div className="tarot-badge">{getTopicLabel(draw.topic)}</div>
-                          <h3 className="tarot-name">{draw.card.name}</h3>
-                          <p className="muted tarot-mode">
-                            {draw.mode === "upright" ? "Thuận" : "Ngược"}
-                          </p>
+          <div className="tarot-face tarot-front">
+            <div className="tarot-front-head">
+              <div className="tarot-badge">{getTopicLabel(draw.topic)}</div>
+              <h3 className="tarot-name">{draw.card.name}</h3>
+              <p className="muted tarot-mode">
+                {draw.mode === "upright" ? "Thuận" : "Ngược"}
+              </p>
+            </div>
 
-                          <p className="tarot-reading">
-                            {draw.reading.split(". ").slice(0, 2).join(". ")}
-                          </p>
+            <div className="tarot-meaning-scroll">
+              <p className="tarot-meaning">{draw.reading}</p>
+            </div>
 
-                          <p className="tarot-tap-hint">Chạm để úp lại</p>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            <p className="tarot-tap-hint">Chạm để úp lại</p>
+          </div>
+        </div>
+      </button>
+    );
+  })}
+</div>
 
               <div className="section-block">
                 <h3>🔍 Lời kết dành cho đạo hữu</h3>

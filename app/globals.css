@@ -499,16 +499,43 @@ button:disabled {
 }
 
 .tarot-front {
-  background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
-  transform: rotateY(180deg);
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  max-height: 520px;
+  overflow: hidden;
 }
 
-.tarot-back-content {
-  text-align: center;
+.tarot-front-head {
+  flex-shrink: 0;
 }
 
+.tarot-meaning-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tarot-meaning {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .tarot-front {
+    min-height: 360px;
+    max-height: 440px;
+  }
+
+  .tarot-meaning {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}
 .tarot-back-icon {
   font-size: 40px;
   margin-bottom: 10px;
