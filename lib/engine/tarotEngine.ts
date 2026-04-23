@@ -1,9 +1,17 @@
 import { tarotDeck } from "@/data/tarotDeck";
-import type { TarotDirection, TarotDrawItem } from "@/lib/engine/buildTarotReading";
+
+type TarotDirection = "upright" | "reversed";
+
+type TarotDrawItem = {
+  name: string;
+  image: string;
+  focus: string;
+  direction: TarotDirection;
+};
 
 function shuffleArray<T>(arr: T[]): T[] {
   const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
+  for (let i = copy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
