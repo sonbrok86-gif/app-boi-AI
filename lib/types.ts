@@ -66,11 +66,7 @@ export type PersonalitySummary = {
 
 export type TarotCard = {
   name: string;
-  meaning: {
-    love: string;
-    work: string;
-    life: string;
-  };
+  meaning?: string;
 };
 
 export type LifeSection = {

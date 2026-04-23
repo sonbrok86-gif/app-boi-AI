@@ -31,20 +31,8 @@ const majorArcana: TarotCard[] = [
 ];
 
 const ranks = [
-  "Ace",
-  "Two",
-  "Three",
-  "Four",
-  "Five",
-  "Six",
-  "Seven",
-  "Eight",
-  "Nine",
-  "Ten",
-  "Page",
-  "Knight",
-  "Queen",
-  "King",
+  "Ace","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+  "Page","Knight","Queen","King"
 ] as const;
 
 const suits = [
@@ -54,8 +42,8 @@ const suits = [
   { key: "pentacles", label: "Pentacles" },
 ] as const;
 
-const minorArcana: TarotCard[] = suits.flatMap((suit) =>
-  ranks.map((rank) => ({
+const minorArcana: TarotCard[] = suits.flatMap(suit =>
+  ranks.map(rank => ({
     name: `${rank} of ${suit.label}`,
     slug: `${rank.toLowerCase()}-of-${suit.key}`,
     arcana: "minor" as const,
